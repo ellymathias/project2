@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Form</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #d39f52;
+    }
+
+   
+    nav {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .navy {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .navy a {
+      color: white;
+      padding: 14px 20px;
+      text-decoration: none;
+    }
+
+    .navy a:hover {
+      background-color: #575757;
+    }
+
+    .navy .dropdown {
+      display: inline-block;
+      position: relative;
+    }
+
+    .navy .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #333;
+      min-width: 160px;
+      z-index: 1;
+    }
+
+    .navy .dropdown-content a {
+      color: white;
+      padding: 12px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .navy .dropdown:hover .dropdown-content {
+      display: block;
+    } 
+
+    .container {
+      margin-top: 60px;
+      padding: 20px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+   
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    input, select {
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+  
+    .carousel {
+      display: flex;
+      overflow: hidden;
+      width: 100%;
+      max-width: 800px;
+      margin: 20px auto;
+    }
+
+    .carousel img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+   
+    .form-button {
+      background-color: #333;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .form-button:hover {
+      background-color: #575757;
+    }
+  </style>
+</head>
+<body>
+
+
+  <div class='navy'>
+    
+ 
+        <a href="index.html">Home</a>
+   
+</div>
+
+
+  <div class="carousel">
+    <img src="airport.jpeg" alt="Image 1">
+    <img src="girrafe.jpeg" alt="Image 2">
+    <img src="island.jpeg" alt="Image 3">
+  </div>
+
+
+  <div class="container" id="form">
+    <h2>User Registration</h2>
+    <form id="registrationForm">
+   
+      <input type="text" id="fullName" placeholder="Full Name (First Middle Last)" required>
+
+   
+      <input type="text" id="registrationNumber" placeholder="Registration Number (e.g., BCS-00-000-000)" required>
+
+  
+      <select id="sex" required>
+        <option value="" disabled selected>Choose Sex</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+
+    
+      <input type="email" id="email" placeholder="Email Address" required>
+
+   
+      <select id="region" required>
+        <option value="" disabled selected>Choose Region</option>
+        <option value="ARUSHA">ARUSHA</option>
+        <option value="ZANZIBAR">ZANZIBAR</option>
+      </select>
+
+      <select id="district" required>
+        <option value="" disabled selected>Choose District</option>
+        <option value="NGORONGORO">NGORONGORO</option>
+        <option value="KICHUNGWANI">KICHUNGWANI</option>
+      </select>
+
+     
+      <input type="password" id="password" placeholder="Password" required>
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+
+  
+      <button type="submit" class="form-button">Submit</button>
+    </form>
+  </div>
+
+ 
+  <script>
+    $(document).ready(function() {
+      
+      $("nav a").click(function(e) {
+        e.preventDefault();
+        $('html, body').animate({
+          scrollTop: $($(this).attr("href")).offset().top
+        }, 500);
+      });
+
+    
+      $(".dropdown").hover(
+        function() {
+          $(this).find(".dropdown-content").stop(true, true).slideDown(200);
+        },
+        function() {
+          $(this).find(".dropdown-content").stop(true, true).slideUp(200);
+        }
+      );
+
+    
+      $("#region").change(function() {
+        var region = $(this).val();
+        if (region) {
+          $.ajax({
+            url: 'get_districts.php',  
+            type: 'GET',
+            data: { region: region },
+            success: function(response) {
+              $('#district').html(response);
+            }
+          });
+        }
+      });
+
+    
+      $('#fullName').on('input', function() {
+        var name = $(this).val().trim().split(" ");
+        if (name.length === 3) {
+          $(this).css('border', '1px solid green');
+        } else {
+          $(this).css('border', '1px solid red');
+        }
+      });
+
+   
+      $('#registrationNumber').on('input', function() {
+        var regExp = /^BCS-\d{2}-\d{3}-\d{3}$/;
+        if (!regExp.test($(this).val())) {
+          $(this).css('border', '1px solid red');
+        } else {
+          $(this).css('border', '1px solid green');
+        }
+      });
+
+     
+      $('#email').on('input', function() {
+        var regExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        if (!regExp.test($(this).val())) {
+          $(this).css('border', '1px solid red');
+        } else {
+          $(this).css('border', '1px solid green');
+        }
+      });
+
+    
+      $('#password').on('input', function() {
+        var pass = $(this).val();
+        var regExp = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        if (!regExp.test(pass)) {
+          $(this).css('border', '1px solid red');
+        } else {
+          $(this).css('border', '1px solid green');
+        }
+      });
+
+
+      $('#confirmPassword').on('input', function() {
+        if ($(this).val() !== $('#password').val()) {
+          $(this).css('border', '1px solid red');
+        } else {
+          $(this).css('border', '1px solid green');
+        }
+      });
+
+     
+      $('#registrationForm').submit(function(e) {
+        e.preventDefault();
+        if ($("#fullName").css('border-color') === 'rgb(0, 128, 0)' && $("#registrationNumber").css('border-color') === 'rgb(0, 128, 0)' && $("#email").css('border-color') === 'rgb(0, 128, 0)' && $("#password").css('border-color') === 'rgb(0, 128, 0)' && $("#confirmPassword").css('border-color') === 'rgb(0, 128, 0)') {
+          alert('Form successfully submitted!');
+        } else {
+          alert('Please complete the form correctly.');
+        }
+      });
+
+    
+      let currentIndex = 0;
+      const images = $(".carousel img");
+      setInterval(function() {
+        $(images[currentIndex]).fadeOut(500);
+        currentIndex = (currentIndex + 1) % images.length;
+        $(images[currentIndex]).fadeIn(500);
+      }, 3000);
+    });
+  </script>
+
+</body>
+</html>
